@@ -65,7 +65,7 @@ local function search(mode)
                 return
             end
             buffer = handleCase(formatSearch(buffer))
-            vim.fn.cursor(line, col)
+            vim.fn.cursor({line, col})
             vim.fn.search(buffer, mode == "?" and "b" or "")
             table.insert(matchIds, vim.fn.matchadd("Search", buffer))
             if vim.o.incsearch then
@@ -77,7 +77,8 @@ local function search(mode)
     clearMatches()
     vim.o.hlsearch = hlsearch
     if result then
-        return mode .. formatSearch(result) .. termcode("<cr>")
+        local escaped = formatSearch(result):gsub(escape(mode), "\\" .. mode)
+        return mode .. escaped .. termcode("<cr>")
     else
         vim.cmd.echo("''")
         return ""
@@ -87,7 +88,6 @@ end
 return {
     setup = function(variables)
         VARIABLES = variables
-
         vim.keymap.set(
             {"n", "v", "o"},
             "/",
