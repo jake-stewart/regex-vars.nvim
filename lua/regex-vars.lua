@@ -66,7 +66,7 @@ local function search(mode)
             end
             buffer = formatSearch(buffer)
             local empty = #vim.fn.substitute(
-                buffer, "\\c\\v^(\\\\[vc])+", "", "g") == 0
+                buffer, "\\C\\v^(\\\\([VvCcMmZ]|\\%C))+", "", "g") == 0
             vim.fn.cursor({line, col})
             if not empty then
                 buffer = handleCase(buffer)
