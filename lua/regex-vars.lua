@@ -64,12 +64,20 @@ local function search(mode)
                 vim.cmd.redraw()
                 return
             end
-            buffer = handleCase(formatSearch(buffer))
+            buffer = formatSearch(buffer)
+            local empty = #vim.fn.substitute(
+                buffer, "\\c\\v^(\\\\[vc])+", "", "g") == 0
             vim.fn.cursor({line, col})
-            vim.fn.search(buffer, mode == "?" and "b" or "")
-            table.insert(matchIds, vim.fn.matchadd("Search", buffer))
-            if vim.o.incsearch then
-                table.insert(matchIds, vim.fn.matchadd("IncSearch", "\\%#" .. buffer))
+            if not empty then
+                buffer = handleCase(buffer)
+                pcall(function()
+                    vim.fn.search(buffer, mode == "?" and "b" or "")
+                    table.insert(matchIds, vim.fn.matchadd("Search", buffer))
+                    if vim.o.incsearch then
+                        table.insert(matchIds,
+                            vim.fn.matchadd("IncSearch", "\\%#" .. buffer))
+                    end
+                end)
             end
             vim.cmd.redraw()
         end
