@@ -1,7 +1,7 @@
 regex-vars.nvim
 ===============
 
-![regex-vars-demo](https://github.com/jake-stewart/regex-vars.nvim/assets/83528263/dd961a75-9b25-43e0-ad14-2a110f1fa14a)
+![demo](https://github.com/jake-stewart/regex-vars.nvim/assets/83528263/7bde0744-f035-43e1-b82d-9d70fe8edc02)
 
 allows defining variables which are expanded during search. for example, you
 could make a `:email:` variable which you type and automatically expands to an
