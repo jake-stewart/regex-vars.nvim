@@ -4,6 +4,8 @@ allows defining variables which are expanded during search. for example, you
 could make a `:email:` variable which you type and automatically expands to an
 email regex.
 
+it supports `incsearch` and respects your `'magic'`, `'ignorecase'`, `'smartcase'`, settings.
+
 it also changes the functionality of typing `/` (or `?` if backwards). default
 functionality is to use previous search if empty or end the search. the new behaviour
 is to automatically escape these characters. if you wish to use the previous
