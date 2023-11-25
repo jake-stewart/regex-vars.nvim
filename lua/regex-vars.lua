@@ -41,13 +41,28 @@ local function formatSearch(buffer)
     return buffer
 end
 
-local function handleCase(buffer)
-    if vim.o.ignorecase and not
-        (vim.o.smartcase and string.find(buffer, "[A-Z]"))
-    then
-        buffer = "\\c" .. buffer
+local function addFlags(buffer)
+    local ignorecase = vim.o.ignorecase
+    local backslash = false
+    for i = 1, #buffer do
+        local char = string.sub(buffer, i, i)
+        if backslash then
+            if char == "C" then
+                ignorecase = false
+            elseif char == "c" then
+                -- \c anywhere in regex makes the whole ignorecase
+                ignorecase = true
+                break
+            end
+            backslash = false
+        elseif char == "\\" then
+            backslash = true
+        end
     end
-    return buffer
+    local magic = (vim.o.magic and "\\v" or "\\V")
+    local case = (ignorecase and "\\c" or "\\C")
+    local smartCase = ignorecase and vim.o.smartcase and string.find(buffer, "[A-Z]")
+    return (smartCase and "\\C" or case) .. magic .. buffer
 end
 
 local function search(mode)
@@ -69,7 +84,7 @@ local function search(mode)
                 buffer, "\\C\\v^(\\\\([VvCcMmZ]|\\%C))+", "", "g") == 0
             vim.fn.cursor({line, col})
             if not empty then
-                buffer = handleCase(buffer)
+                buffer = addFlags(buffer)
                 pcall(function()
                     vim.fn.search(buffer, mode == "?" and "b" or "")
                     table.insert(matchIds, vim.fn.matchadd("Search", buffer))
