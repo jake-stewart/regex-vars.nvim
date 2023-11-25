@@ -25,5 +25,5 @@ rv.setup({
 ```
 
 ### usage
-with the example config, `[foo]` is mapped to `bar`. you can use `/` or `?` to
-search and `[foo]` in your search will be replaced with `bar`.
+with the example config, `:foo:` is mapped to `bar`. you can use `/` or `?` to
+search and `:foo:` in your search will be replaced with `bar`.
