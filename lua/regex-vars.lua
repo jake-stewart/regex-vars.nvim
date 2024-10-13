@@ -99,13 +99,11 @@ local function search(mode)
     end)
     clearMatches()
     vim.o.hlsearch = hlsearch
-    if result then
-        local escaped = formatSearch(result):gsub(escape(mode), "\\" .. mode)
-        return mode .. escaped .. termcode("<cr>")
-    else
-        vim.cmd.echo("''")
-        return ""
+    if not result then
+        return mode .. termcode("<c-c>")
     end
+    local escaped = formatSearch(result):gsub(escape(mode), "\\" .. mode)
+    return mode .. escaped .. termcode("<cr>")
 end
 
 return {
