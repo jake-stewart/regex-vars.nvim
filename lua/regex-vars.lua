@@ -36,9 +36,9 @@ end
 
 local function formatSearch(buffer)
     for key, value in pairs(VARIABLES) do
-        buffer = string.gsub(buffer, key, value)
+        buffer = string.gsub(buffer, key, "\\v" .. value .. "\\V")
     end
-    return buffer
+    return string.gsub(buffer, "\\V\\v", "")
 end
 
 local function addFlags(buffer)
@@ -59,7 +59,7 @@ local function addFlags(buffer)
             backslash = true
         end
     end
-    local magic = (vim.o.magic and "\\v" or "\\V")
+    local magic = (vim.o.magic and "\\m" or "\\M")
     local case = (ignorecase and "\\c" or "\\C")
     local smartCase = ignorecase and vim.o.smartcase and string.find(buffer, "[A-Z]")
     return (smartCase and "\\C" or case) .. magic .. buffer
