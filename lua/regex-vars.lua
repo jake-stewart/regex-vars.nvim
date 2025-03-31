@@ -66,10 +66,21 @@ local function addFlags(buffer)
 end
 
 local function search(mode)
-    local hlsearch = vim.o.hlsearch
-    if vim.o.incsearch then
-        vim.o.hlsearch = false
-    end
+    local IncSearch = vim.api.nvim_get_hl(0, {
+        name = "IncSearch",
+        create = false,
+        link = true,
+    })
+    local Search = vim.api.nvim_get_hl(0, {
+        name = "Search",
+        create = false,
+        link = true,
+    })
+    vim.api.nvim_set_hl(0, "IncSearch", { link = "Normal" })
+    vim.api.nvim_set_hl(0, "Search", { link = "Normal" })
+    vim.api.nvim_set_hl(0, "RegexVarsIncSearch", IncSearch)
+    vim.api.nvim_set_hl(0, "RegexVarsSearch", Search)
+
     local line, col = vim.fn.line("."), vim.fn.col(".")
 
     local result = input(mode, function(buffer)
@@ -87,18 +98,19 @@ local function search(mode)
                 buffer = addFlags(buffer)
                 pcall(function()
                     vim.fn.search(buffer, mode == "?" and "b" or "")
-                    table.insert(matchIds, vim.fn.matchadd("Search", buffer))
+                    table.insert(matchIds, vim.fn.matchadd("RegexVarsSearch", buffer))
                     if vim.o.incsearch then
                         table.insert(matchIds,
-                            vim.fn.matchadd("IncSearch", "\\%#" .. buffer))
+                            vim.fn.matchadd("RegexVarsIncSearch", "\\%#" .. buffer))
                     end
                 end)
             end
             vim.cmd.redraw()
         end
     end)
+    vim.api.nvim_set_hl(0, "IncSearch", IncSearch)
+    vim.api.nvim_set_hl(0, "Search", Search)
     clearMatches()
-    vim.o.hlsearch = hlsearch
     if not result then
         return mode .. termcode("<c-c>")
     end
